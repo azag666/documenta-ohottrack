@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação da API HotTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        h1, h2, h3 {
+            color: #f0f6fc;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+        h1 { font-size: 2em; margin-bottom: 24px; }
+        h2 { font-size: 1.5em; margin-top: 32px; margin-bottom: 16px; }
+        h3 { font-size: 1.25em; margin-top: 24px; margin-bottom: 16px; border: none; }
+        code {
+            background-color: #2b3036;
+            color: #a7b2be;
+            padding: .2em .4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 6px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        pre > code {
+            display: block;
+            padding: 16px;
+            overflow: auto;
+            line-height: 1.45;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .highlight {
+            background-color: #2b2b00;
+            border: 1px solid #797900;
+            padding: 16px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🚀 Documentação da API HotTrack para ManyChat</h1>
+
+        <div class="card">
+            <h2>Configuração Inicial</h2>
+            <p>Antes de começar, você precisará de duas informações essenciais do seu painel HotTrack:</p>
+            <ul>
+                <li><strong>Sua Chave de API (API Key):</strong> Encontrada na aba "Documentação" do seu painel. Ela é secreta e autentica suas chamadas.</li>
+                <li><strong>O ID do Lead (Click ID):</strong> Este é o identificador único para cada cliente que clica no seu link de pressel. O seu bot do Telegram recebe essa informação automaticamente (ex: <code>/start lead000001</code>).</li>
+            </ul>
+            <p class="highlight"><strong>Dica:</strong> No ManyChat, armazene sua API Key em uma "Bot Field" (Variável do Bot) chamada <code>hottrack_api_key</code> para não precisar digitá-la toda vez. O <code>click_id</code> deve ser salvo em uma "Custom User Field" (Variável de Usuário).</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Gerar uma Cobrança PIX</h2>
+            <p>Use esta rota para criar uma nova cobrança PIX para o seu cliente.</p>
+
+            <h3>Passo a Passo no ManyChat:</h3>
+            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> (External Request) e configure assim:</p>
+            
+            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
+            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
+
+            <p><strong>Aba "Corpo" (Body):</strong></p>
+            <pre><code>{
+  "click_id": "{{click_id}}",
+  "value_cents": 1990
+}</code></pre>
+            <p><strong>Importante:</strong> O campo <code>value_cents</code> deve ser o valor em <strong>centavos</strong>. Ex: R$ 19,90 = <code>1990</code>.</p>
+
+            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
+            <p>Salve as respostas da API em Variáveis de Usuário para poder enviar ao seu cliente:</p>
+            <ul>
+                <li><code>$.qr_code_text</code> -> Salvar em <code>pix_copia_e_cola</code></li>
+                <li><code>$.qr_code_base64</code> -> Salvar em <code>pix_qr_code_imagem</code></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>2. Consultar Status do PIX</h2>
+            <p>Após gerar um PIX, use esta rota para verificar se o cliente já realizou o pagamento.</p>
+            
+            <h3>Passo a Passo no ManyChat:</h3>
+            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> e configure assim:</p>
+
+            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
+            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
+            
+            <p><strong>Aba "Corpo" (Body):</strong></p>
+            <pre><code>{
+  "click_id": "{{click_id}}"
+}</code></pre>
+
+            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
+            <p>O mais importante aqui é salvar o status geral do pagamento:</p>
+            <ul>
+                <li><code>$.status</code> -> Salvar em <code>pix_status</code></li>
+            </ul>
+
+            <h3 style="margin-top: 24px;">Usando a Resposta com "Condições"</h3>
+            <p>Depois da Solicitação Externa, adicione um passo de <strong>"Condição"</strong> para direcionar o cliente:</p>
+            <ul>
+                <li>Se <code>pix_status</code> é <code>paid</code> -> Envie a mensagem de "Pagamento Aprovado!" e entregue o produto.</li>
+                <li>Se <code>pix_status</code> é <code>pending</code> -> Envie a mensagem de "Ainda estamos aguardando seu pagamento."</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>3. Consultar Dados do Lead (Cidade e Estado)</h2>
+            <p>Use esta rota para personalizar sua conversa, mencionando a cidade do lead.</p>
+            
+            <h3>Passo a Passo no ManyChat:</h3>
+            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> e configure assim:</p>
+
+            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
+            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
+            
+            <p><strong>Aba "Corpo" (Body):</strong></p>
+            <pre><code>{
+  "click_id": "{{click_id}}"
+}</code></pre>
+
+            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
+            <p>Salve a cidade e o estado em Variáveis de Usuário:</p>
+            <ul>
+                <li><code>$.city</code> -> Salvar em <code>lead_cidade</code></li>
+                <li><code>$.state</code> -> Salvar em <code>lead_estado</code></li>
+            </ul>
+            <p>Agora você pode usar a variável <code>{{lead_cidade}}</code> nas suas mensagens para criar uma comunicação muito mais pessoal!</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
