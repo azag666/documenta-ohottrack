@@ -3,156 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentação da API HotTrack</title>
+    <title>API HotTrack - Documentação</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #0d1117;
-            color: #c9d1d9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+            background-image: radial-gradient(circle at 1px 1px, rgba(56, 189, 248, 0.1) 1px, transparent 0);
+            background-size: 20px 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
+        .code-block {
+            background-color: rgba(15, 23, 42, 0.8);
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 24px;
-            margin-bottom: 24px;
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+            border-bottom: 2px solid transparent;
         }
-        h1, h2, h3 {
-            color: #f0f6fc;
-            border-bottom: 1px solid #30363d;
-            padding-bottom: 8px;
+        .tab-btn.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
         }
-        h1 { font-size: 2em; margin-bottom: 24px; }
-        h2 { font-size: 1.5em; margin-top: 32px; margin-bottom: 16px; }
-        h3 { font-size: 1.25em; margin-top: 24px; margin-bottom: 16px; border: none; }
-        code {
-            background-color: #2b3036;
-            color: #a7b2be;
-            padding: .2em .4em;
-            margin: 0;
-            font-size: 85%;
-            border-radius: 6px;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        .tab-content {
+            display: none;
         }
-        pre > code {
+        .tab-content.active {
             display: block;
-            padding: 16px;
-            overflow: auto;
-            line-height: 1.45;
         }
-        p {
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-        .highlight {
-            background-color: #2b2b00;
-            border: 1px solid #797900;
-            padding: 16px;
+        .api-badge {
+            display: inline-block;
+            padding: 4px 8px;
             border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
         }
+        .api-badge-post { background-color: #22c55e20; color: #4ade80; }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <div class="container">
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
 
-        <h1>🚀 Documentação da API HotTrack para ManyChat</h1>
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white">Documentação da API HotTrack</h1>
+            <p class="text-xl text-slate-400 mt-2">Guia de integração passo a passo para ManyChat.</p>
+        </header>
 
-        <div class="card">
-            <h2>Configuração Inicial</h2>
-            <p>Antes de começar, você precisará de duas informações essenciais do seu painel HotTrack:</p>
-            <ul>
-                <li><strong>Sua Chave de API (API Key):</strong> Encontrada na aba "Documentação" do seu painel. Ela é secreta e autentica suas chamadas.</li>
-                <li><strong>O ID do Lead (Click ID):</strong> Este é o identificador único para cada cliente que clica no seu link de pressel. O seu bot do Telegram recebe essa informação automaticamente (ex: <code>/start lead000001</code>).</li>
-            </ul>
-            <p class="highlight"><strong>Dica:</strong> No ManyChat, armazene sua API Key em uma "Bot Field" (Variável do Bot) chamada <code>hottrack_api_key</code> para não precisar digitá-la toda vez. O <code>click_id</code> deve ser salvo em uma "Custom User Field" (Variável de Usuário).</p>
-        </div>
+        <main class="space-y-12">
 
-        <div class="card">
-            <h2>1. Gerar uma Cobrança PIX</h2>
-            <p>Use esta rota para criar uma nova cobrança PIX para o seu cliente.</p>
+            <section class="bg-slate-900/50 border border-sky-500/20 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-sky-400 mb-4">Configuração Essencial</h2>
+                <p class="text-slate-300">Antes de começar, você precisa de duas variáveis do seu painel HotTrack. É highly recomendado salvá-las no ManyChat para facilitar o uso:</p>
+                <div class="grid md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-slate-800/50 p-4 rounded">
+                        <h3 class="font-semibold text-white">1. Sua Chave de API (API Key)</h3>
+                        <p class="text-sm text-slate-400">Encontrada na aba "Documentação". Salve-a em uma **Variável de Bot** (Bot Field) chamada <code>hottrack_api_key</code>.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-4 rounded">
+                        <h3 class="font-semibold text-white">2. ID do Lead (Click ID)</h3>
+                        <p class="text-sm text-slate-400">Seu bot recebe isso quando o usuário clica no link (ex: <code>/start lead123</code>). Salve em uma **Variável de Usuário** (User Field) chamada <code>click_id</code>.</p>
+                    </div>
+                </div>
+            </section>
 
-            <h3>Passo a Passo no ManyChat:</h3>
-            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> (External Request) e configure assim:</p>
+            <section id="gerar-pix">
+                <div class="flex items-center gap-4 mb-4">
+                     <span class="api-badge api-badge-post">POST</span>
+                     <h2 class="text-3xl font-bold text-white">Gerar Cobrança PIX</h2>
+                </div>
+                <p class="text-slate-400">Cria uma nova cobrança PIX para um lead específico.</p>
+                
+                <div class="mt-6 tab-container">
+                    <div class="border-b border-slate-700 mb-4">
+                        <nav class="flex space-x-4" aria-label="Tabs">
+                            <button class="tab-btn active py-2 px-1 font-medium text-slate-300">Passo a Passo (ManyChat)</button>
+                            <button class="tab-btn py-2 px-1 font-medium text-slate-300">Exemplos de Resposta (JSON)</button>
+                        </nav>
+                    </div>
+                    
+                    <div class="tab-content active">
+                        <ol class="list-decimal list-inside space-y-4 text-slate-300">
+                            <li>Adicione uma Ação de <strong>"Solicitação Externa"</strong>.</li>
+                            <li>Na aba <strong>"Cabeçalho" (Headers)</strong>, adicione:
+                                <div class="code-block mt-2">x-api-key: {{hottrack_api_key}}</div>
+                            </li>
+                            <li>Na aba <strong>"Corpo" (Body)</strong>, insira o JSON abaixo. Lembre-se que <code>value_cents</code> é o valor em <strong>centavos</strong> (ex: R$ 19,90 = 1990).
+                                <div class="code-block mt-2">{
+    "click_id": "{{click_id}}",
+    "value_cents": 1990
+}</div>
+                            </li>
+                            <li>Na aba <strong>"Mapeamento de Respostas"</strong>, salve os dados em Variáveis de Usuário:
+                                <div class="code-block mt-2">$.qr_code_text   ->   Salvar em <strong>pix_copia_e_cola</strong>
+$.qr_code_base64 ->   Salvar em <strong>pix_qr_code_imagem</strong></div>
+                                <p class="text-sm mt-2 text-slate-400">Agora você pode enviar <code>{{pix_copia_e_cola}}</code> para o seu cliente!</p>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="tab-content">
+                        <h3 class="text-lg font-semibold text-white mb-2">Resposta de Sucesso</h3>
+                        <div class="code-block">{
+    "qr_code_text": "00020126...",
+    "qr_code_base64": "data:image/png;base64,iVBO..."
+}</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="consultar-status">
+                <div class="flex items-center gap-4 mb-4">
+                     <span class="api-badge api-badge-post">POST</span>
+                     <h2 class="text-3xl font-bold text-white">Consultar Status do PIX</h2>
+                </div>
+                <p class="text-slate-400">Verifica se um PIX gerado anteriormente já foi pago.</p>
+                
+                <div class="mt-6 tab-container">
+                    <div class="border-b border-slate-700 mb-4">
+                        <nav class="flex space-x-4" aria-label="Tabs">
+                            <button class="tab-btn active py-2 px-1 font-medium text-slate-300">Passo a Passo (ManyChat)</button>
+                            <button class="tab-btn py-2 px-1 font-medium text-slate-300">Exemplos de Resposta (JSON)</button>
+                        </nav>
+                    </div>
+                    
+                    <div class="tab-content active">
+                         <ol class="list-decimal list-inside space-y-4 text-slate-300">
+                            <li>Adicione uma Ação de <strong>"Solicitação Externa"</strong>.</li>
+                            <li>Na aba <strong>"Cabeçalho" (Headers)</strong>, adicione:
+                                <div class="code-block mt-2">x-api-key: {{hottrack_api_key}}</div>
+                            </li>
+                            <li>Na aba <strong>"Corpo" (Body)</strong>, insira o <code>click_id</code> do usuário:
+                                <div class="code-block mt-2">{
+    "click_id": "{{click_id}}"
+}</div>
+                            </li>
+                            <li>Na aba <strong>"Mapeamento de Respostas"</strong>, salve o status. Este é o passo mais importante para criar a lógica.
+                                <div class="code-block mt-2">$.status   ->   Salvar em <strong>pix_status</strong></div>
+                            </li>
+                             <li>Após esta ação, adicione um passo de <strong>"Condição"</strong> e verifique se <code>{{pix_status}}</code> é <code>paid</code> (pago) ou <code>pending</code> (pendente).</li>
+                        </ol>
+                    </div>
+                    <div class="tab-content">
+                        <h3 class="text-lg font-semibold text-white mb-2">Resposta (Pago)</h3>
+                        <div class="code-block">{
+    "status": "paid",
+    "value": 19.90,
+    ...
+}</div>
+                        <h3 class="text-lg font-semibold text-white mt-4 mb-2">Resposta (Pendente)</h3>
+                        <div class="code-block">{
+    "status": "pending",
+    ...
+}</div>
+                    </div>
+                </div>
+            </section>
             
-            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
-            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
+            <section id="consultar-cidade">
+                <div class="flex items-center gap-4 mb-4">
+                     <span class="api-badge api-badge-post">POST</span>
+                     <h2 class="text-3xl font-bold text-white">Consultar Dados do Lead</h2>
+                </div>
+                <p class="text-slate-400">Obtenha a cidade e o estado do lead para personalizar a conversa.</p>
+                
+                <div class="mt-6 tab-container">
+                    <div class="border-b border-slate-700 mb-4">
+                        <nav class="flex space-x-4" aria-label="Tabs">
+                            <button class="tab-btn active py-2 px-1 font-medium text-slate-300">Passo a Passo (ManyChat)</button>
+                            <button class="tab-btn py-2 px-1 font-medium text-slate-300">Exemplos de Resposta (JSON)</button>
+                        </nav>
+                    </div>
+                    
+                    <div class="tab-content active">
+                        <ol class="list-decimal list-inside space-y-4 text-slate-300">
+                            <li>Adicione uma Ação de <strong>"Solicitação Externa"</strong>.</li>
+                            <li>Na aba <strong>"Cabeçalho" (Headers)</strong>, adicione:
+                                <div class="code-block mt-2">x-api-key: {{hottrack_api_key}}</div>
+                            </li>
+                            <li>Na aba <strong>"Corpo" (Body)</strong>, insira o <code>click_id</code>:
+                                <div class="code-block mt-2">{
+    "click_id": "{{click_id}}"
+}</div>
+                            </li>
+                            <li>Na aba <strong>"Mapeamento de Respostas"</strong>, salve os dados de localização:
+                                <div class="code-block mt-2">$.city   ->   Salvar em <strong>lead_cidade</strong>
+$.state  ->   Salvar em <strong>lead_estado</strong></div>
+                                <p class="text-sm mt-2 text-slate-400">Agora você pode criar mensagens como: "Vi que você é de <code>{{lead_cidade}}</code>! Temos uma oferta especial para sua região."</p>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="tab-content">
+                        <h3 class="text-lg font-semibold text-white mb-2">Resposta de Sucesso</h3>
+                        <div class="code-block">{
+    "status": "success",
+    "city": "Curitiba",
+    "state": "Parana"
+}</div>
+                         <h3 class="text-lg font-semibold text-white mt-4 mb-2">Resposta de Erro (ID não encontrado)</h3>
+                        <div class="code-block">{
+    "message": "Click ID não encontrado para este vendedor."
+}</div>
+                    </div>
+                </div>
+            </section>
 
-            <p><strong>Aba "Corpo" (Body):</strong></p>
-            <pre><code>{
-  "click_id": "{{click_id}}",
-  "value_cents": 1990
-}</code></pre>
-            <p><strong>Importante:</strong> O campo <code>value_cents</code> deve ser o valor em <strong>centavos</strong>. Ex: R$ 19,90 = <code>1990</code>.</p>
-
-            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
-            <p>Salve as respostas da API em Variáveis de Usuário para poder enviar ao seu cliente:</p>
-            <ul>
-                <li><code>$.qr_code_text</code> -> Salvar em <code>pix_copia_e_cola</code></li>
-                <li><code>$.qr_code_base64</code> -> Salvar em <code>pix_qr_code_imagem</code></li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <h2>2. Consultar Status do PIX</h2>
-            <p>Após gerar um PIX, use esta rota para verificar se o cliente já realizou o pagamento.</p>
-            
-            <h3>Passo a Passo no ManyChat:</h3>
-            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> e configure assim:</p>
-
-            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
-            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
-            
-            <p><strong>Aba "Corpo" (Body):</strong></p>
-            <pre><code>{
-  "click_id": "{{click_id}}"
-}</code></pre>
-
-            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
-            <p>O mais importante aqui é salvar o status geral do pagamento:</p>
-            <ul>
-                <li><code>$.status</code> -> Salvar em <code>pix_status</code></li>
-            </ul>
-
-            <h3 style="margin-top: 24px;">Usando a Resposta com "Condições"</h3>
-            <p>Depois da Solicitação Externa, adicione um passo de <strong>"Condição"</strong> para direcionar o cliente:</p>
-            <ul>
-                <li>Se <code>pix_status</code> é <code>paid</code> -> Envie a mensagem de "Pagamento Aprovado!" e entregue o produto.</li>
-                <li>Se <code>pix_status</code> é <code>pending</code> -> Envie a mensagem de "Ainda estamos aguardando seu pagamento."</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <h2>3. Consultar Dados do Lead (Cidade e Estado)</h2>
-            <p>Use esta rota para personalizar sua conversa, mencionando a cidade do lead.</p>
-            
-            <h3>Passo a Passo no ManyChat:</h3>
-            <p>Adicione uma Ação de <strong>"Solicitação Externa"</strong> e configure assim:</p>
-
-            <p><strong>Aba "Cabeçalho" (Headers):</strong></p>
-            <pre><code>x-api-key: {{hottrack_api_key}}</code></pre>
-            
-            <p><strong>Aba "Corpo" (Body):</strong></p>
-            <pre><code>{
-  "click_id": "{{click_id}}"
-}</code></pre>
-
-            <p><strong>Aba "Mapeamento de Respostas" (Response Mapping):</strong></p>
-            <p>Salve a cidade e o estado em Variáveis de Usuário:</p>
-            <ul>
-                <li><code>$.city</code> -> Salvar em <code>lead_cidade</code></li>
-                <li><code>$.state</code> -> Salvar em <code>lead_estado</code></li>
-            </ul>
-            <p>Agora você pode usar a variável <code>{{lead_cidade}}</code> nas suas mensagens para criar uma comunicação muito mais pessoal!</p>
-        </div>
-
+        </main>
     </div>
 
+    <script>
+        // Script para a funcionalidade das abas
+        const tabContainers = document.querySelectorAll('.tab-container');
+        tabContainers.forEach(container => {
+            const tabButtons = container.querySelectorAll('.tab-btn');
+            const tabContents = container.querySelectorAll('.tab-content');
+
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    // Botões
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Conteúdos
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    tabContents[index].classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
