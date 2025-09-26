@@ -3,200 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API HotTrack - Guia de Integração ManyChat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Guia Definitivo de Integração | HotTrack & ManyChat</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #1A1D21;
+            --bg-light: #292E36;
+            --border-color: #3A414B;
+            --text-primary: #F5F5F5;
+            --text-secondary: #A9B2BF;
+            --accent-blue: #3E82F7;
+            --success: #22C55E;
+            --mc-modal-bg: #FFFFFF;
+            --mc-modal-text: #1F232A;
+            --mc-modal-text-light: #6D7685;
+            --mc-modal-border: #E6E9EF;
+            --mc-input-bg-alt: #F7F8FA;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #010409;
-            color: #c9d1d9;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .code-block {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 14px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
         }
-        .step-card {
-            background: linear-gradient(145deg, #161b22, #0d1117);
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1), 0 0 30px rgba(56, 189, 248, 0.05);
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
         }
-        .step-number {
-            background-color: #0c4a6e;
-            color: #7dd3fc;
-            border-radius: 9999px;
-            width: 40px;
-            height: 40px;
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .header h1 span {
+             background: linear-gradient(90deg, var(--accent-blue), #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            margin-bottom: 50px;
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .step-header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-circle {
+            width: 32px; height: 32px; border-radius: 50%; background-color: var(--border-color);
+            color: var(--text-secondary); display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: 700; flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            font-size: 1.125rem;
-            border: 1px solid #075985;
+            color: var(--text-primary);
         }
-        .manychat-ui {
-            background-color: #ffffff;
-            color: #1f2328;
+        
+        .step-description {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            padding-left: 47px;
+        }
+        
+        .request-modal-wrapper {
+             padding-left: 47px;
+        }
+        .request-modal {
+            background-color: var(--mc-modal-bg);
             border-radius: 8px;
-            border: 1px solid #d0d7de;
-            padding: 16px;
-            margin-top: 16px;
+            border: 1px solid var(--mc-modal-border);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            color: var(--mc-modal-text);
         }
-        .manychat-ui strong { color: #0969da; }
-        .manychat-ui code { background-color: #f6f8fa; color: #1f2328; border: 1px solid #d0d7de; }
-        h1, h2, h3 { color: #f0f6fc; }
-        .highlight { color: #7dd3fc; }
+        .modal-header { 
+            padding: 16px 24px; 
+            border-bottom: 1px solid var(--mc-modal-border); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--mc-input-bg-alt);
+        }
+        .modal-header-title { font-size: 1rem; font-weight: 600; }
+        .modal-main-content { padding: 24px; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .form-row label {
+            font-size: 0.9rem;
+            color: var(--mc-modal-text-light);
+            font-weight: 500;
+            text-align: right;
+        }
+        .input-group {
+            display: flex;
+            flex-grow: 1;
+        }
+        .request-type {
+            padding: 8px 12px;
+            background-color: #F7F8FA;
+            border: 1px solid #D1D7E0;
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--mc-modal-text);
+        }
+        .request-url { flex-grow: 1; position: relative; }
+        .request-url input {
+            width: 100%; padding: 8px 45px 8px 12px; background-color: #fff; border: 1px solid #D1D7E0;
+            border-radius: 0 6px 6px 0; color: var(--mc-modal-text); font-family: 'Menlo', monospace; font-size: 0.85rem;
+        }
+        
+        .copy-btn {
+            background-color: #F7F8FA; color: var(--mc-modal-text-light); border: 1px solid #D1D7E0; padding: 4px 8px;
+            border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .copy-btn svg { width: 14px; height: 14px; }
+        .copy-btn:hover { background-color: #E6E9EF; color: var(--mc-modal-text); }
+        .copy-btn.copied { background-color: var(--success); color: white; border-color: var(--success); }
+
+        .request-url .copy-btn { position: absolute; top: 50%; transform: translateY(-50%); right: 6px; height: calc(100% - 8px); }
+
+        .modal-tabs { display: flex; border-bottom: 1px solid var(--mc-modal-border); }
+        .modal-tab-btn {
+            padding: 10px 16px; cursor: pointer; color: var(--mc-modal-text-light); font-weight: 500;
+            border-bottom: 2px solid transparent; transition: all 0.2s ease; font-size: 0.9rem; background: none; border-top: none; border-left: none; border-right: none;
+        }
+        .modal-tab-btn:hover { color: var(--mc-modal-text); }
+        .modal-tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 600; }
+        
+        .modal-tab-content { display: none; padding: 20px 0 0 0; }
+        .modal-tab-content.active { display: block; }
+        
+        .key-value-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px 15px; align-items: center; }
+        .key-value-grid .grid-header { color: var(--mc-modal-text-light); font-size: 0.8rem; font-weight: 500; padding-bottom: 5px; margin-left: 12px; }
+        .key-value-grid .input-wrapper { position: relative; display: flex; align-items: center; }
+        .key-value-grid input {
+            width: 100%; padding: 8px 12px; background-color: #fff; border: 1px solid #D1D7E0;
+            border-radius: 6px; color: var(--mc-modal-text); font-size: 0.9rem;
+        }
+        .key-value-grid .copy-btn { margin-left: 8px; }
+
+        .code-block-body { position: relative; background-color: #F7F8FA; border: 1px solid var(--mc-modal-border); border-radius: 8px; overflow: hidden; }
+        .code-block-body pre { padding: 15px; white-space: pre-wrap; word-break: break-all; color: var(--mc-modal-text); font-size: 0.9rem; line-height: 1.5; font-family: 'Menlo', monospace; }
+        .code-block-body .copy-btn { position: absolute; top: 10px; right: 10px; }
+        .code-block-body code { font-family: inherit; background: none; border: none; padding: 0; color: #DD1144; } /* Syntax highlight simulation */
+        .code-block-body .key { color: #994500; }
+        
+        .response-mapping-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; align-items: center; }
+        .response-mapping-grid input { width: 100%; padding: 8px 12px; background-color: #fff; border: 1px solid #D1D7E0; border-radius: 6px; color: var(--mc-modal-text); }
+        .response-mapping-grid .arrow { color: var(--mc-modal-text-light); font-size: 1.2rem; text-align: center; }
+        .response-mapping-grid .grid-header { color: var(--mc-modal-text-light); font-size: 0.8rem; font-weight: 500; padding-bottom: 5px; margin-left: 12px; }
+        
+        .instruction-block { margin-top: 25px; }
+        .instruction-block h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); }
+        .instruction-block ul { list-style: none; padding-left: 0; }
+        .instruction-block li { position: relative; padding-left: 25px; margin-bottom: 8px; color: var(--text-secondary); }
+        .instruction-block li::before {
+            content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: 700;
+        }
+
+        .condition-block {
+            background-color: #F0FFF9;
+            border: 1px solid #A6F4C5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        .condition-block strong { color: #059669; }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .step[style*="animation-delay"] { animation-fill-mode: both; }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <div class="max-w-4xl mx-auto p-4 md:p-8">
-
-        <header class="text-center mb-16">
-            <div class="inline-block bg-sky-500/10 text-sky-400 font-bold py-2 px-4 rounded-full mb-4">
-                GUIA DE INTEGRAÇÃO
-            </div>
-            <h1 class="text-5xl font-extrabold text-white tracking-tight">API HotTrack + ManyChat</h1>
-            <p class="text-xl text-slate-400 mt-4">Um guia visual para configurar sua automação do zero, mesmo que você nunca tenha usado o ManyChat.</p>
+    <div class="container">
+        <header class="header">
+            <h1>Guia de Integração: <span>ManyChat</span></h1>
+            <p>Siga este guia visual para configurar a automação de pagamentos PIX. As telas abaixo são uma réplica exata do ManyChat para facilitar a sua implementação.</p>
         </header>
 
-        <main class="space-y-16">
-
-            <section id="preparacao">
-                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-                    <div class="step-number">0</div> Preparando seu ManyChat
-                </h2>
-                <div class="step-card space-y-4">
-                    <p>Antes de usar a API, precisamos "preparar o terreno" no seu ManyChat. Isso envolve criar campos para guardar suas informações importantes. Fazemos isso uma única vez.</p>
-                    <div class="bg-slate-800/80 p-4 rounded-md border border-slate-700">
-                        <h3 class="font-semibold text-lg text-white">1. Crie uma Variável para sua Chave de API</h3>
-                        <p class="text-slate-400 text-sm">Esta variável guardará sua chave secreta da API HotTrack. Como ela é a mesma para o bot inteiro, usamos uma **Variável de Bot**.</p>
-                        <p class="text-sm mt-2">➡️ No ManyChat, vá em: <strong>Configurações</strong> > <strong>Campos</strong> > <strong>+ Novo Campo de Bot</strong>. Crie com o nome <code>hottrack_api_key</code> e cole sua chave lá dentro.</p>
+        <main>
+            <!-- Step 0 -->
+            <div id="step-0" class="step" style="animation-delay: 0.1s;">
+                <div class="step-header"><div class="step-circle">0</div><h2 class="step-title">Preparação: Criando os Campos</h2></div>
+                <p class="step-description">Antes de tudo, precisamos criar os "campos" no ManyChat para guardar as informações. Faremos isso uma única vez.</p>
+                <div class="request-modal-wrapper">
+                    <div class="instruction-block">
+                        <h3>1. Bot Fields (Suas Chaves Secretas)</h3>
+                        <p class="step-description" style="padding-left:0;">Vá em <strong>Configurações (Settings) → Campos (Fields)</strong>. Crie os 2 campos abaixo para guardar suas chaves da HotTrack e do Telegram.
+                        <br><strong>É crucial que os nomes sejam exatamente estes:</strong></p>
+                        <ul>
+                            <li><code>keyhottrack</code> (Tipo: Text) - Cole aqui sua chave da API HotTrack.</li>
+                            <li><code>tokenbot</code> (Tipo: Text) - Cole aqui o token do seu bot do Telegram.</li>
+                        </ul>
                     </div>
-                    <div class="bg-slate-800/80 p-4 rounded-md border border-slate-700">
-                        <h3 class="font-semibold text-lg text-white">2. Crie Variáveis para os Leads</h3>
-                        <p class="text-slate-400 text-sm">Estas variáveis guardarão as informações de cada cliente (lead). Como cada cliente tem dados diferentes, usamos uma **Variável de Usuário**.</p>
-                        <p class="text-sm mt-2">➡️ No ManyChat, vá em: <strong>Configurações</strong> > <strong>Campos</strong> > <strong>+ Novo Campo de Usuário</strong>. Crie todas as variáveis que vamos usar nos próximos passos:</p>
-                        <ul class="text-sm list-disc list-inside mt-2 space-y-1">
-                            <li><code>click_id</code> (Tipo: Texto)</li>
-                            <li><code>pix_copia_e_cola</code> (Tipo: Texto)</li>
-                            <li><code>pix_status</code> (Tipo: Texto)</li>
-                            <li><code>lead_cidade</code> (Tipo: Texto)</li>
+                    <div class="instruction-block">
+                        <h3>2. User Fields (Dados dos Clientes)</h3>
+                        <p class="step-description" style="padding-left:0;">Na mesma tela, na aba <strong>User Fields</strong>, crie estes 5 campos para salvar as informações de cada cliente durante a venda.</p>
+                         <ul>
+                            <li><code>cidade</code> (Tipo: Text)</li>
+                            <li><code>click_id</code> (Tipo: Text)</li>
+                            <li><code>id</code> (Tipo: Text)</li>
+                            <li><code>qr_code</code> (Tipo: Text)</li>
+                            <li><code>status</code> (Tipo: Text)</li>
                         </ul>
                     </div>
                 </div>
-            </section>
-            
-            <section id="gerar-pix">
-                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-                    <div class="step-number">1</div> Gerar uma Cobrança PIX
-                </h2>
-                <div class="space-y-6">
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 1: A Ação "Solicitação Externa"</h3>
-                        <p class="text-slate-400">Em seu fluxo, adicione uma nova Ação e procure por <strong>"Solicitação Externa"</strong> (External Request). É aqui que a mágica acontece. Preencha o campo de URL assim:</p>
-                        <div class="manychat-ui">
-                            <p><strong>Tipo de Pedido:</strong> <code class="font-bold">POST</code></p>
-                            <p><strong>Solicitar URL:</strong> <code>https://hottrack.vercel.app/api/pix/generate</code></p>
-                        </div>
-                    </div>
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 2: Cabeçalho (Headers) - Sua Autenticação</h3>
-                        <p class="text-slate-400">O cabeçalho é como seu "crachá de acesso" para a API. Clique na aba <strong>"Cabeçalho"</strong> e adicione sua chave.</p>
-                         <div class="manychat-ui">
-                            <p><code>x-api-key</code> : <code>{{hottrack_api_key}}</code></p>
-                        </div>
-                    </div>
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 3: Corpo (Body) - Os Dados da Cobrança</h3>
-                        <p class="text-slate-400">Clique na aba <strong>"Corpo"</strong>. Aqui você informa para qual lead e qual valor o PIX deve ser gerado. Lembre-se que o valor é em <strong>centavos</strong> (R$ 19,90 = 1990).</p>
-                        <div class="manychat-ui">
-<pre class="code-block" style="background-color: #f6f8fa; color: #1f2328;">{
-  "click_id": "{{click_id}}",
-  "value_cents": 1990
-}</pre>
-                        </div>
-                    </div>
-                     <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 4: Mapeamento de Respostas - Salvando o PIX</h3>
-                        <p class="text-slate-400">Na aba <strong>"Mapeamento de Respostas"</strong>, vamos pegar o PIX gerado e salvar nas variáveis que criamos. O "JSONPath" é o "endereço" da informação na resposta.</p>
-                        <div class="manychat-ui">
-                            <p><code>$.qr_code_text</code> ➔ Salvar em <strong><code>pix_copia_e_cola</code></strong></p>
-                        </div>
-                        <p class="text-slate-300 mt-4">Pronto! Agora é só adicionar um bloco de mensagem e enviar o <code>{{pix_copia_e_cola}}</code> para seu cliente.</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="consultar-status">
-                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-                    <div class="step-number">2</div> Consultar Status do PIX
-                </h2>
-                 <div class="space-y-6">
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 1 e 2: Ação e Cabeçalho</h3>
-                        <p class="text-slate-400">Adicione outra Ação de <strong>"Solicitação Externa"</strong>. A URL e o Cabeçalho são muito parecidos com o passo anterior.</p>
-                        <div class="manychat-ui">
-                            <p><strong>Tipo de Pedido:</strong> <code class="font-bold">POST</code></p>
-                            <p><strong>Solicitar URL:</strong> <code>https://hottrack.vercel.app/api/pix/check-status</code></p>
-                            <p><strong>Cabeçalho:</strong> <code>x-api-key</code> : <code>{{hottrack_api_key}}</code></p>
-                        </div>
-                    </div>
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 3: Corpo (Body)</h3>
-                        <p class="text-slate-400">No corpo, só precisamos informar de qual lead queremos verificar o pagamento.</p>
-                        <div class="manychat-ui">
-<pre class="code-block" style="background-color: #f6f8fa; color: #1f2328;">{
-  "click_id": "{{click_id}}"
-}</pre>
-                        </div>
-                    </div>
-                     <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 4: Mapeamento e Condição</h3>
-                        <p class="text-slate-400">Na aba <strong>"Mapeamento de Respostas"</strong>, salve o status do pagamento na sua variável.</p>
-                        <div class="manychat-ui">
-                            <p><code>$.status</code> ➔ Salvar em <strong><code>pix_status</code></strong></p>
-                        </div>
-                        <p class="text-slate-300 mt-4">Após esta ação, adicione um passo de <strong>"Condição"</strong>. Crie uma regra: "Se <code>{{pix_status}}</code> for <code>paid</code>". Se a condição for verdadeira, entregue o produto. Se não, continue aguardando.</p>
-                    </div>
-                </div>
-            </section>
+            </div>
 
-            <section id="consultar-cidade">
-                 <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-                    <div class="step-number">3</div> Consultar Cidade do Lead
-                </h2>
-                <div class="space-y-6">
-                    <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 1 a 3: Configuração da Chamada</h3>
-                        <p class="text-slate-400">Adicione uma Ação de <strong>"Solicitação Externa"</strong> e configure a URL, Cabeçalho e Corpo para identificar o lead.</p>
-                        <div class="manychat-ui">
-                            <p><strong>URL:</strong> <code>https://hottrack.vercel.app/api/click/info</code></p>
-                            <p><strong>Cabeçalho:</strong> <code>x-api-key</code> : <code>{{hottrack_api_key}}</code></p>
-                            <p><strong>Corpo:</strong> <code>{"click_id": "{{click_id}}"}</code></p>
+            <!-- Step 1 -->
+            <div id="step-1" class="step" style="animation-delay: 0.2s;">
+                 <div class="step-header"><div class="step-circle">1</div><h2 class="step-title">Gatilho (Trigger)</h2></div>
+                <p class="step-description">O fluxo começará quando um novo usuário entrar em contato pelo Telegram. Configure o gatilho (Trigger) como <strong>"New contact"</strong> e adicione a condição <strong>"Opted-in for Telegram is true"</strong>.</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div id="step-2" class="step" style="animation-delay: 0.3s;">
+                 <div class="step-header"><div class="step-circle">2</div><h2 class="step-title">Coletar Click ID</h2></div>
+                <p class="step-description">Esta ação salva o código de rastreio do seu lead. Adicione uma ação <strong>"Set User Field"</strong> e configure-a para salvar a variável <code>{{Last Text Input}}</code> dentro do campo de usuário <code>click_id</code> que criamos.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="step-3" class="step" style="animation-delay: 0.4s;">
+                 <div class="step-header"><div class="step-circle">3</div><h2 class="step-title">API: Consultar Cidade</h2></div>
+                <p class="step-description">Vamos buscar a cidade do lead para enriquecer os dados. Adicione uma ação <strong>"External Request"</strong> e configure exatamente como abaixo.</p>
+                <div class="request-modal-wrapper">
+                    <div class="request-modal">
+                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
+                        <div class="modal-main-content">
+                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://novaapi-one.vercel.app/api/click/info" id="s3-url-input"><button class="copy-btn" data-target="s3-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
+                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="3" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="3" data-tab="body">Body</button><button class="modal-tab-btn" data-modal="3" data-tab="response">Response mapping</button></div>
+                            <div id="modal3-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Aqui informamos nossa chave secreta para a API nos autenticar.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s3-h1-key"><button class="copy-btn" data-target="s3-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s3-h1-val"><button class="copy-btn" data-target="s3-h1-val" title="Copiar Valor">Copiar</button></div></div></div>
+                            <div id="modal3-tab-body" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Enviamos o <code>click_id</code> do usuário para a API saber de quem buscar a cidade.</p><div class="code-block-body"><pre id="s3-body">{
+    "click_id": "{{click_id}}"
+}</pre><button class="copy-btn" data-target="s3-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div>
+                            <div id="modal3-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos a resposta da API (a cidade) no campo de usuário que criamos.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Select Custom Field</div><input type="text" readonly value="$.city"><span class="arrow">→</span><input type="text" readonly value="cidade"/></div></div>
                         </div>
-                    </div>
-                     <div class="step-card">
-                        <h3 class="text-xl font-bold text-white mb-2">Passo 4: Mapeamento dos Dados</h3>
-                        <p class="text-slate-400">Na aba <strong>"Mapeamento de Respostas"</strong>, salve a cidade do seu lead.</p>
-                        <div class="manychat-ui">
-                            <p><code>$.city</code> ➔ Salvar em <strong><code>lead_cidade</code></strong></p>
-                        </div>
-                        <p class="text-slate-300 mt-4">Perfeito! Agora você pode usar <code>{{lead_cidade}}</code> em qualquer mensagem para criar uma conexão instantânea com seu cliente. Ex: "E aí! Vi que você é de <strong>{{lead_cidade}}</strong>, que legal!".</p>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="step-4" class="step" style="animation-delay: 0.5s;">
+                <div class="step-header"><div class="step-circle">4</div><h2 class="step-title">API: Gerar Cobrança PIX</h2></div>
+                <p class="step-description">Crie a cobrança PIX com o valor do produto. Lembre-se que o valor deve ser em centavos (ex: R$ 19,99 = 1999).</p>
+                 <div class="request-modal-wrapper">
+                    <div class="request-modal">
+                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
+                        <div class="modal-main-content">
+                             <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://novaapi-one.vercel.app/api/pix/generate" id="s4-url-input"><button class="copy-btn" data-target="s4-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
+                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="4" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="4" data-tab="body">Body</button><button class="modal-tab-btn" data-modal="4" data-tab="response">Response mapping</button></div>
+                            <div id="modal4-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Precisamos de duas chaves: uma para autenticação e outra para informar o formato do conteúdo.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s4-h1-key"><button class="copy-btn" data-target="s4-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s4-h1-val"><button class="copy-btn" data-target="s4-h1-val" title="Copiar Valor">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="Content-Type" id="s4-h2-key"><button class="copy-btn" data-target="s4-h2-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="application/json" id="s4-h2-val"><button class="copy-btn" data-target="s4-h2-val" title="Copiar Valor">Copiar</button></div></div></div>
+                            <div id="modal4-tab-body" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Enviamos o ID do lead e o valor da compra (em centavos).</p><div class="code-block-body"><pre id="s4-body">{
+    <span class="key">"click_id"</span>: <code>"{{click_id}}"</code>,
+    <span class="key">"value_cents"</span>: <code style="color: #0550AE">1999</code>
+}</pre><button class="copy-btn" data-target="s4-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div>
+                            <div id="modal4-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos o ID da transação e o código PIX nos campos de usuário.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Custom Field</div><input type="text" readonly value="$.transaction_id"><span class="arrow">→</span><input type="text" readonly value="id"><input type="text" readonly value="$.qr_code_text"><span class="arrow">→</span><input type="text" readonly value="qr_code"/></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 5 -->
+            <div id="step-5" class="step" style="animation-delay: 0.6s;">
+                <div class="step-header"><div class="step-circle">5</div><h2 class="step-title">API: Enviar PIX ao Cliente</h2></div>
+                <p class="step-description">Agora, usamos a API oficial do Telegram para enviar a cobrança ao cliente com um botão "copia e cola".</p>
+                 <div class="request-modal-wrapper">
+                     <div class="request-modal">
+                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
+                        <div class="modal-main-content">
+                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://api.telegram.org/bot{{tokenbot}}/sendMessage" id="s5-url-input"><button class="copy-btn" data-target="s5-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
+                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="5" data-tab="body">Body</button></div>
+                            <div id="modal5-tab-body" class="modal-tab-content active">
+                                <p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 10px;">Este corpo (Body) envia a mensagem formatada para o usuário no Telegram.</p>
+                                <div class="code-block-body"><pre id="s5-body">{
+    <span class="key">"chat_id"</span>: <code>"{{telegram_user_id}}"</code>,
+    <span class="key">"text"</span>: <code>"Seu código PIX Copia e Cola está pronto:\n\n<code>{{qr_code}}</code>"</code>,
+    <span class="key">"parse_mode"</span>: <code>"HTML"</code>,
+    <span class="key">"reply_markup"</span>: {
+        <span class="key">"inline_keyboard"</span>: [[
+            { <span class="key">"text"</span>: <code>"📲 Copiar Código PIX"</code>, <span class="key">"copy_text"</span>: <code>"{{qr_code}}"</code> }
+        ]]
+    }
+}</pre><button class="copy-btn" data-target="s5-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 6 -->
+            <div id="step-6" class="step" style="animation-delay: 0.7s;">
+                 <div class="step-header"><div class="step-circle">6</div><h2 class="step-title">API: Verificar Pagamento</h2></div>
+                <p class="step-description">Após uma pausa no fluxo (ex: 1 minuto com "Smart Delay"), consulte o status do PIX para saber se foi pago.</p>
+                 <div class="request-modal-wrapper">
+                    <div class="request-modal">
+                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
+                        <div class="modal-main-content">
+                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">GET</div><div class="request-url"><input type="text" readonly value="https://novaapi-one.vercel.app/api/pix/status/{{id}}" id="s6-url-input"><button class="copy-btn" data-target="s6-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
+                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="6" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="6" data-tab="response">Response mapping</button></div>
+                            <div id="modal6-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">A autenticação é necessária para consultar um pagamento.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s6-h1-key"><button class="copy-btn" data-target="s6-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s6-h1-val"><button class="copy-btn" data-target="s6-h1-val" title="Copiar Valor">Copiar</button></div></div></div>
+                            <div id="modal6-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos o status retornado (<code>paid</code> ou <code>pending</code>) no campo de usuário <code>status</code>.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Custom Field</div><input type="text" readonly value="$.status"><span class="arrow">→</span><input type="text" readonly value="status"/></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div id="step-7" class="step" style="animation-delay: 0.8s;">
+                 <div class="step-header"><div class="step-circle">7</div><h2 class="step-title">Dividindo o Fluxo com Condição</h2></div>
+                <p class="step-description">Com o status salvo, use um bloco de <strong>"Condition"</strong> para direcionar o usuário para o caminho correto.</p>
+                 <div class="request-modal-wrapper">
+                    <div class="condition-block">
+                        <p>Crie duas condições para verificar o campo <code>{{status}}</code>:</p>
+                        <ul style="list-style: none; padding-left: 0; color: var(--mc-modal-text);">
+                            <li style="margin-bottom: 10px;">➡️ <strong>SE</strong> o campo <code>{{status}}</code> for <code>paid</code> → envie o usuário para o fluxo de "Pagamento Aprovado".</li>
+                            <li>➡️ <strong>SE</strong> o campo <code>{{status}}</code> for <code>pending</code> → envie o usuário para o fluxo de "Cobrança/Lembrete".</li>
+                        </ul>
+                    </div>
+                 </div>
+            </div>
+
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tab switching logic
+            document.querySelectorAll('.modal-tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.dataset.modal;
+                    const tabId = button.dataset.tab;
+                    const parentModal = button.closest('.request-modal');
+                    parentModal.querySelectorAll('.modal-tab-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    parentModal.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+                    parentModal.querySelector(`#modal${modalId}-tab-${tabId}`).classList.add('active');
+                });
+            });
+
+            // Copy-to-clipboard logic
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const target = document.getElementById(button.dataset.target);
+                    if (!target) return;
+
+                    const textToCopy = target.tagName.toLowerCase() === 'pre' ? target.innerText : target.value;
+                    
+                    // Use the robust document.execCommand fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'fixed';
+                    textArea.style.top = '-9999px';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful){
+                            const originalIcon = button.innerHTML;
+                            button.innerHTML = '✔';
+                            button.classList.add('copied');
+                            setTimeout(() => {
+                                button.innerHTML = originalIcon;
+                                button.classList.remove('copied');
+                            }, 2000);
+                        }
+                    } catch (err) {
+                        console.error('Falha ao copiar: ', err);
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+
