@@ -88,6 +88,45 @@
             background-color: #5D9EFF; /* A lighter blue for hover */
             transform: translateY(-2px);
         }
+
+        .video-tutorial-section {
+            margin-bottom: 60px;
+            animation: fadeInUp 0.5s ease-out 0.4s;
+            animation-fill-mode: both;
+        }
+
+        .video-tutorial-section h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .video-tutorial-section p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
         
         .step {
             margin-bottom: 50px;
@@ -254,6 +293,22 @@
             </a>
         </div>
 
+        <section class="video-tutorial-section">
+            <h2>Tutorial em Vídeo</h2>
+            <p>Prefere um guia em vídeo? Assista ao passo a passo completo abaixo para configurar sua integração de forma rápida e visual.</p>
+            <div class="video-container">
+                <iframe 
+                    width="560" 
+                    height="315" 
+                    src="https://www.youtube.com/embed/riqDQoNNmik" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </section>
+
         <main>
             <div id="step-0" class="step" style="animation-delay: 0.1s;">
                 <div class="step-header"><div class="step-circle">0</div><h2 class="step-title">Preparação: Criando os Campos</h2></div>
@@ -344,7 +399,7 @@
                                 <p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 10px;">Este corpo (Body) envia a mensagem formatada para o usuário no Telegram.</p>
                                 <div class="code-block-body"><pre id="s5-body">{
     <span class="key">"chat_id"</span>: <code>"{{tg_user_id}}"</code>,
-    <span class="key">"text"</span>: <code>"&lt;pre&gt;{{cuf_13704152}}&lt;/pre&gt;\n\n 🚨, o código expira em 6 minutos ."</code>,
+    <span class="key">"text"</span>: <code>"&lt;pre&gt;{{cuf_13704152}}&lt;/pre&gt;\n\n 🚨 Meu amor, o código expira em 6 minutos ."</code>,
     <span class="key">"parse_mode"</span>: <code>"HTML"</code>,
     <span class="key">"reply_markup"</span>: {
         <span class="key">"inline_keyboard"</span>: [
