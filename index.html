@@ -3,387 +3,478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia de Criação de Checkouts com IA | HotTrack API</title>
+    <title>HotTrack API | Guias para Desenvolvedores e IA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0D0F12;
-            --bg-card: #16191E;
-            --bg-input: #1F242C;
-            --border-color: #2E3541;
-            --text-primary: #F3F4F6;
-            --text-secondary: #9CA3AF;
-            --accent-blue: #3E82F7;
-            --accent-purple: #8B5CF6;
+            /* Palette FinTech (Dark Mode Linear/Stripe style) */
+            --bg-base: #0A0A0A;
+            --bg-surface: #121212;
+            --bg-surface-hover: #1A1A1A;
+            --border-subtle: #262626;
+            --border-strong: #404040;
+            --text-primary: #EDEDED;
+            --text-secondary: #A1A1AA;
+            --text-muted: #71717A;
+            --accent-brand: #3B82F6;
+            --accent-brand-hover: #60A5FA;
             --success: #10B981;
             --warning: #F59E0B;
+            
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --sidebar-width: 280px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 60px 20px;
+        /* Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-base);
+            border-right: 1px solid var(--border-subtle);
+            padding: 32px 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
+        .brand {
+            font-size: 1.25rem;
             font-weight: 800;
-            margin-bottom: 15px;
-            letter-spacing: -0.05em;
-        }
-
-        .header h1 span {
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 650px;
-            margin: 0 auto;
-        }
-
-        .section-intro {
-            background: linear-gradient(135deg, rgba(62, 130, 247, 0.1), rgba(139, 92, 246, 0.1));
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
+            letter-spacing: -0.03em;
             margin-bottom: 40px;
-        }
-
-        .section-intro h2 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        h2.section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 40px 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .step-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .step-badge {
-            display: inline-block;
-            background: rgba(62, 130, 247, 0.15);
-            color: var(--accent-blue);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .api-route {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: var(--bg-input);
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-family: 'Menlo', monospace;
-            font-size: 0.9rem;
-            margin: 15px 0;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .method {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 0.75rem;
-        }
-
-        .method.post { background-color: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .method.get { background-color: rgba(62, 130, 247, 0.2); color: var(--accent-blue); }
-
-        .route-path { flex-grow: 1; color: #E5E7EB; }
-
-        .code-container {
-            position: relative;
-            background-color: var(--bg-input);
-            border-radius: 8px;
-            margin: 15px 0;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            background-color: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        pre {
-            padding: 16px;
-            overflow-x: auto;
-            font-family: 'Menlo', monospace;
-            font-size: 0.85rem;
-            color: #E5E7EB;
-        }
-
-        .copy-btn {
-            background-color: rgba(255,255,255,0.05);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .copy-btn:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-color: var(--text-secondary);
-        }
-
-        .copy-btn.copied {
-            background-color: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .prompt-box {
-            background-color: #1E1B4B;
-            border: 1px solid #4338CA;
-            border-radius: 12px;
-            padding: 30px;
-            margin-top: 20px;
-        }
-
-        .prompt-box h3 {
-            color: #C7D2FE;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .prompt-text {
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid #312E81;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            color: #E0E7FF;
-            white-space: pre-wrap;
-            margin-bottom: 15px;
-            max-height: 300px;
-            overflow-y: auto;
+        .brand span { color: var(--accent-brand); }
+
+        .nav-group { margin-bottom: 24px; }
+        .nav-group-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
-        ul {
-            padding-left: 20px;
-            margin: 10px 0;
+        .nav-link {
+            display: block;
             color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
         }
 
-        li { margin-bottom: 6px; }
+        .nav-link:hover {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+        }
+        .nav-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--accent-brand);
+            font-weight: 500;
+        }
 
-        strong { color: #fff; }
+        /* Main Content Area */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 48px 64px;
+            max-width: 1000px;
+        }
+
+        .page-header { margin-bottom: 48px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; }
+        h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 12px; }
+        .subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 700px; }
+
+        h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 24px 0; letter-spacing: -0.02em; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 16px 0; }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        
+        /* Elements */
+        .endpoint-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: rgba(255,255,255,0.01);
+        }
+
+        .method {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+        .method.post { background-color: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .method.get { background-color: rgba(59, 130, 246, 0.15); color: var(--accent-brand); }
+
+        .endpoint-path { font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-primary); flex: 1; }
+
+        .endpoint-body { padding: 24px; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        th { color: var(--text-muted); font-weight: 500; }
+        td { color: var(--text-secondary); }
+        td code { 
+            font-family: var(--font-mono); 
+            background: var(--bg-base); 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+        .param-req { color: var(--warning); font-size: 0.75rem; font-weight: 600; margin-left: 6px; }
+
+        /* Code Blocks */
+        .code-block {
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            position: relative;
+            margin-bottom: 24px;
+        }
+        
+        .code-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #D4D4D8;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .btn-copy {
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-copy:hover { border-color: var(--text-primary); color: var(--text-primary); }
+        .btn-copy.copied { background: var(--success); border-color: var(--success); color: #000; font-weight: 600; }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--accent-brand);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .btn-primary:hover { background-color: var(--accent-brand-hover); }
+
+        /* Prompt Box */
+        .prompt-container {
+            background: linear-gradient(180deg, #18181B 0%, #0A0A0A 100%);
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 48px;
+            position: relative;
+        }
+        .prompt-container::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-brand), #8B5CF6);
+            border-radius: 12px 12px 0 0;
+        }
+        .prompt-text {
+            background-color: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 24px;
+            font-size: 0.95rem;
+            color: #E4E4E7;
+            white-space: pre-wrap;
+            margin: 24px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 32px 24px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header class="header">
-            <h1>Crie seu Checkout com <span>Inteligência Artificial</span></h1>
-            <p>Não sabe programar? Sem problemas. Use este guia de API junto com o seu modelo de IA favorito (ChatGPT, Claude, Cursor) para gerar um checkout completo e integrado à HotTrack.</p>
+    <nav class="sidebar">
+        <div class="brand">Hot<span>Track</span> API</div>
+        
+        <div class="nav-group">
+            <div class="nav-group-title">Começando</div>
+            <a href="#intro" class="nav-link active">Introdução</a>
+            <a href="#auth" class="nav-link">Autenticação</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">Rotas de Checkout</div>
+            <a href="#resolve-click" class="nav-link">1. Resolve Click</a>
+            <a href="#generate-pix" class="nav-link">2. Gerar PIX</a>
+            <a href="#check-status" class="nav-link">3. Status do Pagamento</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">Automação</div>
+            <a href="#ai-prompt" class="nav-link">Prompt Mestre para IA</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="page-header" id="intro">
+            <h1>Guia de Integração e IA</h1>
+            <p class="subtitle">Documentação técnica oficial para criação de checkouts web e Mini Apps utilizando a API da HotTrack. Projetado para desenvolvedores e modelos de inteligência artificial.</p>
         </header>
 
-        <section class="section-intro">
-            <h2>💡 Como funciona?</h2>
-            <p>Abaixo você encontrará a especificação exata das rotas de pagamento da HotTrack. No final da página, preparamos um <strong>Prompt Mestre</strong>. Basta copiar o prompt, colar na sua IA de preferência e assistir seu checkout PIX de alta conversão ser gerado automaticamente.</p>
+        <section id="auth">
+            <h2>Autenticação</h2>
+            <p>Todas as requisições para a API da HotTrack (exceto rotas públicas específicas) devem ser autenticadas enviando a sua chave secreta no header da requisição.</p>
+            <div class="code-block">
+                <div class="code-header-bar"><span>Headers</span></div>
+                <pre>x-api-key: sua_chave_secreta_aqui
+Content-Type: application/json</pre>
+            </div>
         </section>
 
-        <h2 class="section-title">Referência de API para fornecer à IA</h2>
-
-        <div class="step-card">
-            <span class="step-badge">Passo 1</span>
-            <h3>Capturar Click ID (Resolve Click)</h3>
-            <p>Esta rota é usada para ler os parâmetros de inicialização do Telegram Mini App ou do checkout e gerar o identificador único de rastreamento (<code>click_id</code>).</p>
-            
-            <div class="api-route">
+        <h2 id="resolve-click">1. Resolve Click (Mini Apps)</h2>
+        <p>Utilizada no início do funil para capturar e registrar a sessão do usuário, retornando o identificador de rastreamento (<code>click_id</code>).</p>
+        
+        <div class="endpoint-card">
+            <div class="endpoint-header">
                 <span class="method post">POST</span>
-                <span class="route-path">https://hot-track.com/api/miniapp/resolve-click</span>
-                <button class="copy-btn" data-target="r1-path">Copiar URL</button>
-                <input type="hidden" id="r1-path" value="https://hot-track.com/api/miniapp/resolve-click">
+                <span class="endpoint-path">https://hot-track.com/api/miniapp/resolve-click</span>
+                <button class="btn-copy" data-target="url-1">Copiar</button>
+                <input type="hidden" id="url-1" value="https://hot-track.com/api/miniapp/resolve-click">
             </div>
-
-            <div class="code-container">
-                <div class="code-header"><span>JSON Body Obligatório</span><button class="copy-btn" data-target="r1-body">Copiar</button></div>
-                <pre id="r1-body">{
-    "initData": "string (Dados de inicialização vindos do Telegram)",
-    "checkoutId": "string (O ID do seu checkout na HotTrack)"
+            <div class="endpoint-body">
+                <table>
+                    <thead><tr><th>Parâmetro (Body)</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>initData</code><span class="param-req">OBRIGATÓRIO</span></td><td><code>string</code></td><td>Dados de inicialização vindos do ambiente do Telegram.</td></tr>
+                        <tr><td><code>checkoutId</code><span class="param-req">OBRIGATÓRIO</span></td><td><code>string</code></td><td>O ID do seu produto/checkout configurado na HotTrack.</td></tr>
+                    </tbody>
+                </table>
+                <div class="code-block">
+                    <div class="code-header-bar"><span>Response (200 OK)</span><button class="btn-copy" data-target="res-1">Copiar</button></div>
+                    <pre id="res-1">{
+    "click_id": "clk_01HFWJ4..."
 }</pre>
-            </div>
-
-            <div class="code-container">
-                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
-                <pre>{
-    "click_id": "clk_123456789abc"
-}</pre>
+                </div>
             </div>
         </div>
 
-        <div class="step-card">
-            <span class="step-badge">Passo 2</span>
-            <h3>Gerar Cobrança PIX & Ativar Tracking</h3>
-            <p>Cria uma nova ordem de pagamento em PIX utilizando o <code>click_id</code> obtido no passo anterior. O valor deve sempre ser enviado em centavos.</p>
-            
-            <div class="api-route">
+        <h2 id="generate-pix">2. Geração de PIX</h2>
+        <p>Gera a ordem de pagamento no gateway e retorna o código Copia e Cola para o cliente.</p>
+        
+        <div class="endpoint-card">
+            <div class="endpoint-header">
                 <span class="method post">POST</span>
-                <span class="route-path">https://hot-track.com/api/pix/generate</span>
-                <button class="copy-btn" data-target="r2-path">Copiar URL</button>
-                <input type="hidden" id="r2-path" value="https://hot-track.com/api/pix/generate">
+                <span class="endpoint-path">https://hot-track.com/api/pix/generate</span>
+                <button class="btn-copy" data-target="url-2">Copiar</button>
+                <input type="hidden" id="url-2" value="https://hot-track.com/api/pix/generate">
             </div>
-
-            <ul>
-                <li><strong>Header Requerido:</strong> <code>x-api-key</code>: Sua chave secreta de API HotTrack.</li>
-                <li><strong>Header Requerido:</strong> <code>Content-Type</code>: <code>application/json</code></li>
-            </ul>
-
-            <div class="code-container">
-                <div class="code-header"><span>JSON Body Obligatório</span><button class="copy-btn" data-target="r2-body">Copiar</button></div>
-                <pre id="r2-body">{
-    "click_id": "clk_123456789abc",
-    "value_cents": 1999 // Exemplo para R$ 19,99 (Sempre em centavos)
+            <div class="endpoint-body">
+                <table>
+                    <thead><tr><th>Parâmetro (Body)</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>click_id</code><span class="param-req">OBRIGATÓRIO</span></td><td><code>string</code></td><td>ID capturado no passo Resolve Click.</td></tr>
+                        <tr><td><code>value_cents</code><span class="param-req">OBRIGATÓRIO</span></td><td><code>integer</code></td><td>Valor exato da cobrança em centavos (Ex: R$ 97,50 = <code>9750</code>).</td></tr>
+                    </tbody>
+                </table>
+                <div class="code-block">
+                    <div class="code-header-bar"><span>Response (200 OK)</span><button class="btn-copy" data-target="res-2">Copiar</button></div>
+                    <pre id="res-2">{
+    "transaction_id": "tx_01HFW...",
+    "qr_code_text": "00020101021226870014br.gov.bcb.pix.gui..."
 }</pre>
-            </div>
-
-            <div class="code-container">
-                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
-                <pre>{
-    "transaction_id": "tx_987654321xyz",
-    "qr_code_text": "00020101021226870014br.gov.bcb.pix..." // Código Copia e Cola
-}</pre>
+                </div>
             </div>
         </div>
 
-        <div class="step-card">
-            <span class="step-badge">Passo 3</span>
-            <h3>Verificar Status do Pagamento</h3>
-            <p>Consulta em tempo real se a cobrança PIX já foi liquidada pelo cliente. Ideal para criar loops de checagem automática.</p>
-            
-            <div class="api-route">
+        <h2 id="check-status">3. Status do Pagamento</h2>
+        <p>Rota para checagem (polling) do status da transação. Deve ser chamada a cada X segundos após a exibição do PIX.</p>
+        
+        <div class="endpoint-card">
+            <div class="endpoint-header">
                 <span class="method get">GET</span>
-                <span class="route-path">https://hot-track.com/api/pix/status/{transaction_id}</span>
-                <button class="copy-btn" data-target="r3-path">Copiar URL</button>
-                <input type="hidden" id="r3-path" value="https://hot-track.com/api/pix/status/">
+                <span class="endpoint-path">https://hot-track.com/api/pix/status/{id}</span>
+                <button class="btn-copy" data-target="url-3">Copiar</button>
+                <input type="hidden" id="url-3" value="https://hot-track.com/api/pix/status/{id}">
             </div>
-
-            <ul>
-                <li><strong>Header Requerido:</strong> <code>x-api-key</code>: Sua chave secreta de API HotTrack.</li>
-            </ul>
-
-            <div class="code-container">
-                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
-                <pre>{
-    "status": "paid" // Pode retornar "pending" se ainda não foi pago
+            <div class="endpoint-body">
+                <div class="code-block">
+                    <div class="code-header-bar"><span>Response (200 OK)</span><button class="btn-copy" data-target="res-3">Copiar</button></div>
+                    <pre id="res-3">{
+    "status": "paid" // Pode retornar "pending", "paid", ou "expired"
 }</pre>
+                </div>
             </div>
         </div>
 
-        <h2 class="section-title">O Prompt Mestre da IA</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">Copie o prompt abaixo integralmente e cole no seu chat com a IA (Claude ou ChatGPT). Lembre-se de substituir os placeholders marcados com <code>[]</code> com os dados do seu produto.</p>
+        <h2 id="ai-prompt">Prompt Mestre para IA (Claude / Windsurf / Cursor)</h2>
+        <p>Acelere seu desenvolvimento. O prompt abaixo foi desenhado com engenharia de contexto para garantir que a IA gere um código que respeite as regras de negócio da HotTrack, além de aplicar um design premium instantaneamente.</p>
 
-        <div class="prompt-box">
-            <h3>🚀 Prompt para Copiar e Colar</h3>
-            <div class="prompt-text" id="master-prompt">Atue como um desenvolvedor especialista em UI/UX FinTech sênior. Preciso que você crie um código de checkout em arquivo único (HTML, CSS embutido e JavaScript puro) para vender o meu produto digital: [NOME DO SEU PRODUTO].
+        <div class="prompt-container">
+            <h3>🤖 Prompt de Geração de Checkout</h3>
+            <p style="font-size: 0.9rem;">Substitua os valores entre colchetes <code>[ ]</code> antes de enviar para a IA.</p>
+            
+            <div class="prompt-text" id="prompt-master">Atue como um Engenheiro Front-end Sênior especialista em conversão e UI/UX. Preciso que você desenvolva um checkout web (Single Page Application em HTML, CSS embutido e Vanilla JS) integrado à API da plataforma HotTrack para vender o produto: [NOME DO PRODUTO].
 
-O design deve seguir o padrão estético de plataformas de alta tecnologia como Stripe e Linear: tema escuro super limpo, fontes elegantes (Inter), espaçamentos bem definidos, bordas discretas e sem elementos visuais poluídos ou cores neon exageradas.
+DIRETRIZES DE DESIGN (CRÍTICO):
+O design deve ser rigorosamente minimalista e sofisticado, inspirado no ecossistema FinTech (como Stripe e Linear). 
+- Utilize Dark Mode como padrão (fundo quase preto, superfícies cinza muito escuro).
+- Tipografia limpa (Inter ou system-ui).
+- Sem cores neon, sem sombras exageradas, sem elementos poluídos. O layout deve transmitir extrema confiança, tecnologia e segurança.
 
-O checkout deve realizar a integração completa com a API da HotTrack seguindo rigorosamente este fluxo técnico:
+REGRAS DE NEGÓCIO E FLUXO TÉCNICO (CRÍTICO):
+Você NÃO deve utilizar pagamentos nativos do Telegram em nenhuma hipótese. O fluxo de pagamento será exclusivamente via PIX Copia e Cola, executado na própria interface web, seguindo estes passos sequenciais:
 
-1. Ao carregar a página, capture o 'initData' (do ambiente do Telegram) e envie um POST para `https://hot-track.com/api/miniapp/resolve-click` contendo o JSON com o 'initData' e o meu 'checkoutId' fixo que é: [INSIRA_SEU_CHECKOUT_ID_AQUI]. Guarde o 'click_id' retornado.
+1. CAPTURA (Resolve Click):
+Ao inicializar, faça uma requisição POST para 'https://hot-track.com/api/miniapp/resolve-click'.
+Envie no JSON body: { "initData": "[SUA_LOGICA_DE_INIT_DATA_AQUI]", "checkoutId": "[SEU_CHECKOUT_ID_AQUI]" }.
+Extraia o 'click_id' da resposta.
 
-2. Em seguida, acione automaticamente (ou via clique de botão de compra) a rota de geração do PIX enviando um POST para `https://hot-track.com/api/pix/generate`. Passe o Header 'x-api-key' com o valor [SUA_API_KEY_AQUI] e no body envie o 'click_id' capturado e o valor 'value_cents' fixado em [VALOR_EM_CENTAVOS_AQUI, ex: 1999 para R$19,99].
+2. GERAÇÃO DA COBRANÇA:
+Com o 'click_id' em mãos, faça um POST para 'https://hot-track.com/api/pix/generate'.
+Headers obrigatórios: 'x-api-key: [SUA_API_KEY_AQUI]' e 'Content-Type: application/json'.
+JSON Body: { "click_id": "valor_capturado", "value_cents": [VALOR_EM_CENTAVOS_AQUI] }.
+Extraia o 'transaction_id' e o 'qr_code_text'.
 
-3. Quando receber o 'qr_code_text' e o 'transaction_id', exiba uma interface limpa contendo:
-   - Um campo de texto com o código PIX Copia e Cola.
-   - Um botão proeminente de "Copiar Código PIX" que jogue o texto para a área de transferência e dê um feedback visual de "Copiado!".
-   - Um aviso discreto informando que o código expira em breve.
+3. INTERFACE DE PAGAMENTO:
+Exiba o código PIX ('qr_code_text') de forma clara com um botão proeminente "Copiar Código PIX". Ao clicar, o código deve ir para a área de transferência do usuário com um feedback visual elegante de sucesso.
 
-4. Inicie imediatamente após a geração um sistema de polling (verificação cíclica) a cada 4 segundos fazendo uma requisição GET para `https://hot-track.com/api/pix/status/{transaction_id}` passando o Header 'x-api-key'. Se o retorno for `"status": "paid"`, pare a verificação e altere a tela de forma fluida para uma linda mensagem de sucesso de "Pagamento Confirmado!".
+4. POLLING DE STATUS:
+Imediatamente após renderizar o PIX, inicie um setInterval de 4 em 4 segundos fazendo um GET para 'https://hot-track.com/api/pix/status/{transaction_id}' passando o header 'x-api-key'.
+Se a API retornar { "status": "paid" }, interrompa o polling (clearInterval) e alterne a tela suavemente para uma mensagem de "Pagamento Confirmado" com um botão de acesso ao produto.
 
-Gere o arquivo completo estruturado pronto para uso.</div>
-            <button class="copy-btn" style="width: 100%; padding: 12px; font-weight: 600; font-size: 1rem; background-color: var(--accent-purple); border-color: #6D28D9;" data-target="master-prompt">Copiar Prompt Mestre</button>
+Gere o código completo, blindado contra erros (com try/catch nas requisições) e pronto para ser executado no navegador.</div>
+
+            <button class="btn-primary" data-target="prompt-master" onclick="copyPrompt(this)">Copiar Prompt Mestre</button>
         </div>
-
-    </div>
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.copy-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const target = document.getElementById(button.dataset.target);
-                    if (!target) return;
+        // Copy to clipboard logic
+        document.querySelectorAll('.btn-copy').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const targetId = button.getAttribute('data-target');
+                const target = document.getElementById(targetId);
+                if (!target) return;
 
-                    const textToCopy = target.tagName.toLowerCase() === 'pre' || target.classList.contains('prompt-text') ? target.innerText : target.value;
-                    
-                    const textArea = document.createElement('textarea');
-                    textArea.value = textToCopy;
-                    textArea.style.position = 'fixed';
-                    textArea.style.top = '-9999px';
-                    textArea.style.left = '-9999px';
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    
-                    try {
-                        const successful = document.execCommand('copy');
-                        if(successful){
-                            const originalText = button.innerText;
-                            button.innerText = '✓ Copiado!';
-                            button.classList.add('copied');
-                            setTimeout(() => {
-                                button.innerText = originalText;
-                                button.classList.remove('copied');
-                            }, 2000);
-                        }
-                    } catch (err) {
-                        console.error('Falha ao copiar: ', err);
-                    } finally {
-                        document.body.removeChild(textArea);
-                    }
-                });
+                const text = target.tagName.toLowerCase() === 'pre' ? target.innerText : target.value;
+                executeCopy(text, button, 'Copiar');
+            });
+        });
+
+        function copyPrompt(button) {
+            const targetId = button.getAttribute('data-target');
+            const text = document.getElementById(targetId).innerText;
+            executeCopy(text, button, 'Copiar Prompt Mestre');
+        }
+
+        function executeCopy(text, buttonElement, originalText) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                buttonElement.innerText = 'Copiado!';
+                buttonElement.classList.add('copied');
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                    buttonElement.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Erro ao copiar:', err);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // Smooth scroll for sidebar links
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if(targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 40,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
     </script>
