@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia Definitivo de Integração | HotTrack & ManyChat</title>
+    <title>Guia de Criação de Checkouts com IA | HotTrack API</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #1A1D21;
-            --bg-light: #292E36;
-            --border-color: #3A414B;
-            --text-primary: #F5F5F5;
-            --text-secondary: #A9B2BF;
+            --bg-dark: #0D0F12;
+            --bg-card: #16191E;
+            --bg-input: #1F242C;
+            --border-color: #2E3541;
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
             --accent-blue: #3E82F7;
-            --success: #22C55E;
-            --mc-modal-bg: #FFFFFF;
-            --mc-modal-text: #1F232A;
-            --mc-modal-text-light: #6D7685;
-            --mc-modal-border: #E6E9EF;
-            --mc-input-bg-alt: #F7F8FA;
+            --accent-purple: #8B5CF6;
+            --success: #10B981;
+            --warning: #F59E0B;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,29 +29,28 @@
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 50px 20px;
+            padding: 60px 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.8s ease-out;
+            margin-bottom: 50px;
         }
 
         .header h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            letter-spacing: -0.05em;
         }
+
         .header h1 span {
-             background: linear-gradient(90deg, var(--accent-blue), #8B5CF6);
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -61,419 +58,306 @@
         .header p {
             font-size: 1.1rem;
             color: var(--text-secondary);
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
         }
 
-        .action-button-wrapper {
-            text-align: center;
-            margin-bottom: 60px;
-            animation: fadeInUp 0.5s ease-out 0.2s;
-            animation-fill-mode: both;
+        .section-intro {
+            background: linear-gradient(135deg, rgba(62, 130, 247, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
         }
 
-        .save-flow-btn {
-            display: inline-block;
-            background-color: var(--accent-blue);
-            color: var(--text-primary);
-            padding: 15px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: transform 0.2s ease, background-color 0.2s ease;
+        .section-intro h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .save-flow-btn:hover {
-            background-color: #5D9EFF;
-            transform: translateY(-2px);
-        }
-
-        .video-tutorial-section {
-            margin-bottom: 60px;
-            animation: fadeInUp 0.5s ease-out 0.4s;
-            animation-fill-mode: both;
-        }
-
-        .video-tutorial-section h2 {
-            font-size: 2.2rem;
+        h2.section-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            text-align: center;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .step-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: rgba(62, 130, 247, 0.15);
+            color: var(--accent-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
             margin-bottom: 15px;
         }
 
-        .video-tutorial-section p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 30px auto;
-        }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-        
-        .step {
-            margin-bottom: 50px;
-            animation: fadeInUp 0.5s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .step-header {
+        .api-route {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .step-circle {
-            width: 32px; height: 32px; border-radius: 50%; background-color: var(--border-color);
-            color: var(--text-secondary); display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 700; flex-shrink: 0;
-        }
-
-        .step-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .step-description {
-            color: var(--text-secondary);
-            margin-bottom: 25px;
-            padding-left: 47px;
-        }
-        
-        .request-modal-wrapper {
-             padding-left: 47px;
-        }
-        .request-modal {
-            background-color: var(--mc-modal-bg);
+            gap: 10px;
+            background-color: var(--bg-input);
+            padding: 12px 16px;
             border-radius: 8px;
-            border: 1px solid var(--mc-modal-border);
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            color: var(--mc-modal-text);
+            font-family: 'Menlo', monospace;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .modal-header { 
-            padding: 16px 24px; 
-            border-bottom: 1px solid var(--mc-modal-border); 
+
+        .method {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .method.post { background-color: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .method.get { background-color: rgba(62, 130, 247, 0.2); color: var(--accent-blue); }
+
+        .route-path { flex-grow: 1; color: #E5E7EB; }
+
+        .code-container {
+            position: relative;
+            background-color: var(--bg-input);
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .code-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--mc-input-bg-alt);
+            padding: 8px 16px;
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
-        .modal-header-title { font-size: 1rem; font-weight: 600; }
-        .modal-main-content { padding: 24px; }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: center;
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Menlo', monospace;
+            font-size: 0.85rem;
+            color: #E5E7EB;
         }
-        .form-row label {
-            font-size: 0.9rem;
-            color: var(--mc-modal-text-light);
-            font-weight: 500;
-            text-align: right;
-        }
-        .input-group {
-            display: flex;
-            flex-grow: 1;
-        }
-        .request-type {
-            padding: 8px 12px;
-            background-color: #F7F8FA;
-            border: 1px solid #D1D7E0;
-            border-right: none;
-            border-radius: 6px 0 0 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--mc-modal-text);
-        }
-        .request-url { flex-grow: 1; position: relative; }
-        .request-url input {
-            width: 100%; padding: 8px 45px 8px 12px; background-color: #fff; border: 1px solid #D1D7E0;
-            border-radius: 0 6px 6px 0; color: var(--mc-modal-text); font-family: 'Menlo', monospace; font-size: 0.85rem;
-        }
-        
+
         .copy-btn {
-            background-color: #F7F8FA; color: var(--mc-modal-text-light); border: 1px solid #D1D7E0; padding: 4px 8px;
-            border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s ease;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .copy-btn svg { width: 14px; height: 14px; }
-        .copy-btn:hover { background-color: #E6E9EF; color: var(--mc-modal-text); }
-        .copy-btn.copied { background-color: var(--success); color: white; border-color: var(--success); }
-
-        .request-url .copy-btn { position: absolute; top: 50%; transform: translateY(-50%); right: 6px; height: calc(100% - 8px); }
-
-        .modal-tabs { display: flex; border-bottom: 1px solid var(--mc-modal-border); }
-        .modal-tab-btn {
-            padding: 10px 16px; cursor: pointer; color: var(--mc-modal-text-light); font-weight: 500;
-            border-bottom: 2px solid transparent; transition: all 0.2s ease; font-size: 0.9rem; background: none; border-top: none; border-left: none; border-right: none;
-        }
-        .modal-tab-btn:hover { color: var(--mc-modal-text); }
-        .modal-tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 600; }
-        
-        .modal-tab-content { display: none; padding: 20px 0 0 0; }
-        .modal-tab-content.active { display: block; }
-        
-        .key-value-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px 15px; align-items: center; }
-        .key-value-grid .grid-header { color: var(--mc-modal-text-light); font-size: 0.8rem; font-weight: 500; padding-bottom: 5px; margin-left: 12px; }
-        .key-value-grid .input-wrapper { position: relative; display: flex; align-items: center; }
-        .key-value-grid input {
-            width: 100%; padding: 8px 12px; background-color: #fff; border: 1px solid #D1D7E0;
-            border-radius: 6px; color: var(--mc-modal-text); font-size: 0.9rem;
-        }
-        .key-value-grid .copy-btn { margin-left: 8px; }
-
-        .code-block-body { position: relative; background-color: #F7F8FA; border: 1px solid var(--mc-modal-border); border-radius: 8px; overflow: hidden; }
-        .code-block-body pre { padding: 15px; white-space: pre-wrap; word-break: break-all; color: var(--mc-modal-text); font-size: 0.9rem; line-height: 1.5; font-family: 'Menlo', monospace; }
-        .code-block-body .copy-btn { position: absolute; top: 10px; right: 10px; }
-        .code-block-body code { font-family: inherit; background: none; border: none; padding: 0; color: #DD1144; }
-        .code-block-body .key { color: #994500; }
-        
-        .response-mapping-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; align-items: center; }
-        .response-mapping-grid input { width: 100%; padding: 8px 12px; background-color: #fff; border: 1px solid #D1D7E0; border-radius: 6px; color: var(--mc-modal-text); }
-        .response-mapping-grid .arrow { color: var(--mc-modal-text-light); font-size: 1.2rem; text-align: center; }
-        .response-mapping-grid .grid-header { color: var(--mc-modal-text-light); font-size: 0.8rem; font-weight: 500; padding-bottom: 5px; margin-left: 12px; }
-        
-        .instruction-block { margin-top: 25px; }
-        .instruction-block h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); }
-        .instruction-block ul { list-style: none; padding-left: 0; }
-        .instruction-block li { position: relative; padding-left: 25px; margin-bottom: 8px; color: var(--text-secondary); }
-        .instruction-block li::before {
-            content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: 700;
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .condition-block {
-            background-color: #F0FFF9;
-            border: 1px solid #A6F4C5;
-            border-radius: 8px;
+        .copy-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: var(--text-secondary);
+        }
+
+        .copy-btn.copied {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .prompt-box {
+            background-color: #1E1B4B;
+            border: 1px solid #4338CA;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .prompt-box h3 {
+            color: #C7D2FE;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prompt-text {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #312E81;
             padding: 20px;
-            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #E0E7FF;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
         }
-        .condition-block strong { color: #059669; }
 
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .step[style*="animation-delay"] { animation-fill-mode: both; }
+        ul {
+            padding-left: 20px;
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        li { margin-bottom: 6px; }
+
+        strong { color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header class="header">
-            <h1>Guia de Integração: <span>ManyChat</span></h1>
-            <p>Siga este guia visual para configurar a automação de pagamentos PIX. As telas abaixo são uma réplica exata do ManyChat para facilitar a sua implementação.</p>
+            <h1>Crie seu Checkout com <span>Inteligência Artificial</span></h1>
+            <p>Não sabe programar? Sem problemas. Use este guia de API junto com o seu modelo de IA favorito (ChatGPT, Claude, Cursor) para gerar um checkout completo e integrado à HotTrack.</p>
         </header>
 
-        <div class="action-button-wrapper">
-            <a href="https://app.manychat.com/flowPlayerPage?share_hash=" target="_blank" class="save-flow-btn">
-                Salvar Fluxo de Exemplo no ManyChat
-            </a>
-        </div>
-
-        <section class="video-tutorial-section">
-            <h2>Tutorial em Vídeo</h2>
-            <p>Prefere um guia em vídeo? Assista ao passo a passo completo abaixo para configurar sua integração de forma rápida e visual.</p>
-            <div class="video-container">
-                <iframe 
-                    width="560" 
-                    height="315" 
-                    src="https://www.youtube.com/embed/SEU_NOVO_VIDEO_AQUI" 
-                    title="YouTube video player" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
+        <section class="section-intro">
+            <h2>💡 Como funciona?</h2>
+            <p>Abaixo você encontrará a especificação exata das rotas de pagamento da HotTrack. No final da página, preparamos um <strong>Prompt Mestre</strong>. Basta copiar o prompt, colar na sua IA de preferência e assistir seu checkout PIX de alta conversão ser gerado automaticamente.</p>
         </section>
 
-        <main>
-            <div id="step-0" class="step" style="animation-delay: 0.1s;">
-                <div class="step-header"><div class="step-circle">0</div><h2 class="step-title">Preparação: Criando os Campos</h2></div>
-                <p class="step-description">Antes de tudo, precisamos criar os "campos" no ManyChat para guardar as informações. Faremos isso uma única vez.</p>
-                <div class="request-modal-wrapper">
-                    <div class="instruction-block">
-                        <h3>1. Bot Fields (Suas Chaves Secretas)</h3>
-                        <p class="step-description" style="padding-left:0;">Vá em <strong>Configurações (Settings) → Campos (Fields)</strong>. Crie os 2 campos abaixo para guardar suas chaves da HotTrack e do Telegram.
-                        <br><strong>É crucial que os nomes sejam exatamente estes:</strong></p>
-                        <ul>
-                            <li><code>keyhottrack</code> (Tipo: Text) - Cole aqui sua chave da API HotTrack.</li>
-                            <li><code>tokenbot</code> (Tipo: Text) - Cole aqui o token do seu bot do Telegram.</li>
-                        </ul>
-                    </div>
-                    <div class="instruction-block">
-                        <h3>2. User Fields (Dados dos Clientes)</h3>
-                        <p class="step-description" style="padding-left:0;">Na mesma tela, na aba <strong>User Fields</strong>, crie estes campos para salvar as informações de cada cliente durante a venda.</p>
-                         <ul>
-                            <li><code>click_id</code> (Tipo: Text)</li>
-                            <li><code>id</code> (Tipo: Text)</li>
-                            <li><code>qr_code</code> (Tipo: Text)</li>
-                            <li><code>status</code> (Tipo: Text)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <h2 class="section-title">Referência de API para fornecer à IA</h2>
 
-            <div id="step-1" class="step" style="animation-delay: 0.2s;">
-                 <div class="step-header"><div class="step-circle">1</div><h2 class="step-title">Gatilho (Trigger)</h2></div>
-                <p class="step-description">O fluxo começará quando um novo usuário entrar em contato pelo Telegram. Configure o gatilho (Trigger) como <strong>"New contact"</strong> e adicione a condição <strong>"Opted-in for Telegram is true"</strong>.</p>
-            </div>
+        <div class="step-card">
+            <span class="step-badge">Passo 1</span>
+            <h3>Capturar Click ID (Resolve Click)</h3>
+            <p>Esta rota é usada para ler os parâmetros de inicialização do Telegram Mini App ou do checkout e gerar o identificador único de rastreamento (<code>click_id</code>).</p>
             
-            <div id="step-2" class="step" style="animation-delay: 0.3s;">
-                 <div class="step-header"><div class="step-circle">2</div><h2 class="step-title">Preparando as Variáveis</h2></div>
-                <p class="step-description">Certifique-se de que as variáveis do seu Mini App (como o <code>initData</code> e o seu <code>checkoutId</code>) estão configuradas corretamente antes de chamar a API no próximo passo.</p>
+            <div class="api-route">
+                <span class="method post">POST</span>
+                <span class="route-path">https://hot-track.com/api/miniapp/resolve-click</span>
+                <button class="copy-btn" data-target="r1-path">Copiar URL</button>
+                <input type="hidden" id="r1-path" value="https://hot-track.com/api/miniapp/resolve-click">
             </div>
 
-            <div id="step-3" class="step" style="animation-delay: 0.4s;">
-                 <div class="step-header"><div class="step-circle">3</div><h2 class="step-title">API: Capturar Click ID (Resolve Click)</h2></div>
-                <p class="step-description">Nesta etapa, enviamos os dados de inicialização para gerar e recuperar o <code>click_id</code> do usuário no sistema da HotTrack.</p>
-                <div class="request-modal-wrapper">
-                    <div class="request-modal">
-                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
-                        <div class="modal-main-content">
-                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://hot-track.com/api/miniapp/resolve-click" id="s3-url-input"><button class="copy-btn" data-target="s3-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
-                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="3" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="3" data-tab="body">Body</button><button class="modal-tab-btn" data-modal="3" data-tab="response">Response mapping</button></div>
-                            <div id="modal3-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Informe sua chave secreta para a API autenticar a requisição e o formato do conteúdo.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s3-h1-key"><button class="copy-btn" data-target="s3-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s3-h1-val"><button class="copy-btn" data-target="s3-h1-val" title="Copiar Valor">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="Content-Type" id="s3-h2-key"><button class="copy-btn" data-target="s3-h2-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="application/json" id="s3-h2-val"><button class="copy-btn" data-target="s3-h2-val" title="Copiar Valor">Copiar</button></div></div></div>
-                            <div id="modal3-tab-body" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Enviamos os dados do Mini App e o ID do checkout.</p><div class="code-block-body"><pre id="s3-body">{
-    <span class="key">"initData"</span>: <code>"{{initData}}"</code>,
-    <span class="key">"checkoutId"</span>: <code>"{{checkoutId}}"</code>
-}</pre><button class="copy-btn" data-target="s3-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div>
-                            <div id="modal3-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos a resposta da API no campo de usuário correspondente.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Select Custom Field</div><input type="text" readonly value="$.click_id"><span class="arrow">→</span><input type="text" readonly value="click_id"/></div></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="code-container">
+                <div class="code-header"><span>JSON Body Obligatório</span><button class="copy-btn" data-target="r1-body">Copiar</button></div>
+                <pre id="r1-body">{
+    "initData": "string (Dados de inicialização vindos do Telegram)",
+    "checkoutId": "string (O ID do seu checkout na HotTrack)"
+}</pre>
             </div>
 
-            <div id="step-4" class="step" style="animation-delay: 0.5s;">
-                <div class="step-header"><div class="step-circle">4</div><h2 class="step-title">API: Gerar Cobrança PIX</h2></div>
-                <p class="step-description">Crie a cobrança PIX com o valor do produto e inicie o rastreamento. Lembre-se que o valor deve ser em centavos (ex: R$ 19,99 = 1999).</p>
-                 <div class="request-modal-wrapper">
-                    <div class="request-modal">
-                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
-                        <div class="modal-main-content">
-                             <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://hot-track.com/api/pix/generate" id="s4-url-input"><button class="copy-btn" data-target="s4-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
-                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="4" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="4" data-tab="body">Body</button><button class="modal-tab-btn" data-modal="4" data-tab="response">Response mapping</button></div>
-                            <div id="modal4-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Precisamos de duas chaves: uma para autenticação e outra para informar o formato do conteúdo.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s4-h1-key"><button class="copy-btn" data-target="s4-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s4-h1-val"><button class="copy-btn" data-target="s4-h1-val" title="Copiar Valor">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="Content-Type" id="s4-h2-key"><button class="copy-btn" data-target="s4-h2-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="application/json" id="s4-h2-val"><button class="copy-btn" data-target="s4-h2-val" title="Copiar Valor">Copiar</button></div></div></div>
-                            <div id="modal4-tab-body" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Enviamos o ID do lead e o valor da compra (em centavos).</p><div class="code-block-body"><pre id="s4-body">{
-    <span class="key">"click_id"</span>: <code>"{{click_id}}"</code>,
-    <span class="key">"value_cents"</span>: <code style="color: #0550AE">1999</code>
-}</pre><button class="copy-btn" data-target="s4-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div>
-                            <div id="modal4-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos o ID da transação e o código PIX nos campos de usuário.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Custom Field</div><input type="text" readonly value="$.transaction_id"><span class="arrow">→</span><input type="text" readonly value="id"><input type="text" readonly value="$.qr_code_text"><span class="arrow">→</span><input type="text" readonly value="qr_code"/></div></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="code-container">
+                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
+                <pre>{
+    "click_id": "clk_123456789abc"
+}</pre>
             </div>
+        </div>
+
+        <div class="step-card">
+            <span class="step-badge">Passo 2</span>
+            <h3>Gerar Cobrança PIX & Ativar Tracking</h3>
+            <p>Cria uma nova ordem de pagamento em PIX utilizando o <code>click_id</code> obtido no passo anterior. O valor deve sempre ser enviado em centavos.</p>
             
-            <div id="step-5" class="step" style="animation-delay: 0.6s;">
-                <div class="step-header"><div class="step-circle">5</div><h2 class="step-title">API: Enviar PIX ao Cliente</h2></div>
-                <p class="step-description">Agora, usamos a API oficial do Telegram para enviar a cobrança ao cliente com um botão "copia e cola".</p>
-                 <div class="request-modal-wrapper">
-                     <div class="request-modal">
-                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
-                        <div class="modal-main-content">
-                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">POST</div><div class="request-url"><input type="text" readonly value="https://api.telegram.org/bot{{tokenbot}}/sendMessage" id="s5-url-input"><button class="copy-btn" data-target="s5-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
-                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="5" data-tab="body">Body</button></div>
-                            <div id="modal5-tab-body" class="modal-tab-content active">
-                                <p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 10px;">Este corpo (Body) envia a mensagem formatada para o usuário no Telegram.</p>
-                                <div class="code-block-body"><pre id="s5-body">{
-    <span class="key">"chat_id"</span>: <code>"{{tg_user_id}}"</code>,
-    <span class="key">"text"</span>: <code>"&lt;pre&gt;{{qr_code}}&lt;/pre&gt;\n\n 🚨 O código expira em 6 minutos ."</code>,
-    <span class="key">"parse_mode"</span>: <code>"HTML"</code>,
-    <span class="key">"reply_markup"</span>: {
-        <span class="key">"inline_keyboard"</span>: [
-            [
-                {
-                    <span class="key">"text"</span>: <code>"📋 Copiar Código PIX"</code>,
-                    <span class="key">"copy_text"</span>: {
-                        <span class="key">"text"</span>: <code>"{{qr_code}}"</code>
-                    }
-                }
-            ]
-        ]
-    }
-}</pre><button class="copy-btn" data-target="s5-body" title="Copiar Corpo"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="api-route">
+                <span class="method post">POST</span>
+                <span class="route-path">https://hot-track.com/api/pix/generate</span>
+                <button class="copy-btn" data-target="r2-path">Copiar URL</button>
+                <input type="hidden" id="r2-path" value="https://hot-track.com/api/pix/generate">
             </div>
+
+            <ul>
+                <li><strong>Header Requerido:</strong> <code>x-api-key</code>: Sua chave secreta de API HotTrack.</li>
+                <li><strong>Header Requerido:</strong> <code>Content-Type</code>: <code>application/json</code></li>
+            </ul>
+
+            <div class="code-container">
+                <div class="code-header"><span>JSON Body Obligatório</span><button class="copy-btn" data-target="r2-body">Copiar</button></div>
+                <pre id="r2-body">{
+    "click_id": "clk_123456789abc",
+    "value_cents": 1999 // Exemplo para R$ 19,99 (Sempre em centavos)
+}</pre>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
+                <pre>{
+    "transaction_id": "tx_987654321xyz",
+    "qr_code_text": "00020101021226870014br.gov.bcb.pix..." // Código Copia e Cola
+}</pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span class="step-badge">Passo 3</span>
+            <h3>Verificar Status do Pagamento</h3>
+            <p>Consulta em tempo real se a cobrança PIX já foi liquidada pelo cliente. Ideal para criar loops de checagem automática.</p>
             
-            <div id="step-6" class="step" style="animation-delay: 0.7s;">
-                 <div class="step-header"><div class="step-circle">6</div><h2 class="step-title">API: Verificar Pagamento</h2></div>
-                <p class="step-description">Após uma pausa no fluxo (ex: 1 minuto com "Smart Delay"), consulte o status do PIX para saber se foi pago.</p>
-                 <div class="request-modal-wrapper">
-                    <div class="request-modal">
-                        <div class="modal-header"><span class="modal-header-title">External Request</span></div>
-                        <div class="modal-main-content">
-                            <div class="form-row"><label>Request URL</label><div class="input-group"><div class="request-type">GET</div><div class="request-url"><input type="text" readonly value="https://hot-track.com/api/pix/status/{{id}}" id="s6-url-input"><button class="copy-btn" data-target="s6-url-input" title="Copiar URL"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg></button></div></div></div>
-                            <div class="modal-tabs"><button class="modal-tab-btn active" data-modal="6" data-tab="headers">Headers</button><button class="modal-tab-btn" data-modal="6" data-tab="response">Response mapping</button></div>
-                            <div id="modal6-tab-headers" class="modal-tab-content active"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">A autenticação é necessária para consultar um pagamento.</p><div class="key-value-grid"><div class="grid-header">KEY</div><div class="grid-header">VALUE</div><div class="input-wrapper"><input type="text" readonly value="x-api-key" id="s6-h1-key"><button class="copy-btn" data-target="s6-h1-key" title="Copiar Chave">Copiar</button></div><div class="input-wrapper"><input type="text" readonly value="{{keyhottrack}}" id="s6-h1-val"><button class="copy-btn" data-target="s6-h1-val" title="Copiar Valor">Copiar</button></div></div></div>
-                            <div id="modal6-tab-response" class="modal-tab-content"><p style="font-size: 0.9rem; color: var(--mc-modal-text-light); margin-bottom: 15px;">Salvamos o status retornado (<code>paid</code> ou <code>pending</code>) no campo de usuário <code>status</code>.</p><div class="response-mapping-grid"><div class="grid-header">JSONPath</div><div></div><div class="grid-header">Custom Field</div><input type="text" readonly value="$.status"><span class="arrow">→</span><input type="text" readonly value="status"/></div></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="api-route">
+                <span class="method get">GET</span>
+                <span class="route-path">https://hot-track.com/api/pix/status/{transaction_id}</span>
+                <button class="copy-btn" data-target="r3-path">Copiar URL</button>
+                <input type="hidden" id="r3-path" value="https://hot-track.com/api/pix/status/">
             </div>
 
-            <div id="step-7" class="step" style="animation-delay: 0.8s;">
-                 <div class="step-header"><div class="step-circle">7</div><h2 class="step-title">Dividindo o Fluxo com Condição</h2></div>
-                <p class="step-description">Com o status salvo, use um bloco de <strong>"Condition"</strong> para direcionar o usuário para o caminho correto.</p>
-                 <div class="request-modal-wrapper">
-                    <div class="condition-block">
-                        <p>Crie duas condições para verificar o campo <code>{{status}}</code>:</p>
-                        <ul style="list-style: none; padding-left: 0; color: var(--mc-modal-text);">
-                            <li style="margin-bottom: 10px;">➡️ <strong>SE</strong> o campo <code>{{status}}</code> for <code>paid</code> → envie o usuário para o fluxo de "Pagamento Aprovado".</li>
-                            <li>➡️ <strong>SE</strong> o campo <code>{{status}}</code> for <code>pending</code> → envie o usuário para o fluxo de "Cobrança/Lembrete".</li>
-                        </ul>
-                    </div>
-                 </div>
-            </div>
+            <ul>
+                <li><strong>Header Requerido:</strong> <code>x-api-key</code>: Sua chave secreta de API HotTrack.</li>
+            </ul>
 
-        </main>
+            <div class="code-container">
+                <div class="code-header"><span>Resposta Retornada (Response)</span></div>
+                <pre>{
+    "status": "paid" // Pode retornar "pending" se ainda não foi pago
+}</pre>
+            </div>
+        </div>
+
+        <h2 class="section-title">O Prompt Mestre da IA</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">Copie o prompt abaixo integralmente e cole no seu chat com a IA (Claude ou ChatGPT). Lembre-se de substituir os placeholders marcados com <code>[]</code> com os dados do seu produto.</p>
+
+        <div class="prompt-box">
+            <h3>🚀 Prompt para Copiar e Colar</h3>
+            <div class="prompt-text" id="master-prompt">Atue como um desenvolvedor especialista em UI/UX FinTech sênior. Preciso que você crie um código de checkout em arquivo único (HTML, CSS embutido e JavaScript puro) para vender o meu produto digital: [NOME DO SEU PRODUTO].
+
+O design deve seguir o padrão estético de plataformas de alta tecnologia como Stripe e Linear: tema escuro super limpo, fontes elegantes (Inter), espaçamentos bem definidos, bordas discretas e sem elementos visuais poluídos ou cores neon exageradas.
+
+O checkout deve realizar a integração completa com a API da HotTrack seguindo rigorosamente este fluxo técnico:
+
+1. Ao carregar a página, capture o 'initData' (do ambiente do Telegram) e envie um POST para `https://hot-track.com/api/miniapp/resolve-click` contendo o JSON com o 'initData' e o meu 'checkoutId' fixo que é: [INSIRA_SEU_CHECKOUT_ID_AQUI]. Guarde o 'click_id' retornado.
+
+2. Em seguida, acione automaticamente (ou via clique de botão de compra) a rota de geração do PIX enviando um POST para `https://hot-track.com/api/pix/generate`. Passe o Header 'x-api-key' com o valor [SUA_API_KEY_AQUI] e no body envie o 'click_id' capturado e o valor 'value_cents' fixado em [VALOR_EM_CENTAVOS_AQUI, ex: 1999 para R$19,99].
+
+3. Quando receber o 'qr_code_text' e o 'transaction_id', exiba uma interface limpa contendo:
+   - Um campo de texto com o código PIX Copia e Cola.
+   - Um botão proeminente de "Copiar Código PIX" que jogue o texto para a área de transferência e dê um feedback visual de "Copiado!".
+   - Um aviso discreto informando que o código expira em breve.
+
+4. Inicie imediatamente após a geração um sistema de polling (verificação cíclica) a cada 4 segundos fazendo uma requisição GET para `https://hot-track.com/api/pix/status/{transaction_id}` passando o Header 'x-api-key'. Se o retorno for `"status": "paid"`, pare a verificação e altere a tela de forma fluida para uma linda mensagem de sucesso de "Pagamento Confirmado!".
+
+Gere o arquivo completo estruturado pronto para uso.</div>
+            <button class="copy-btn" style="width: 100%; padding: 12px; font-weight: 600; font-size: 1rem; background-color: var(--accent-purple); border-color: #6D28D9;" data-target="master-prompt">Copiar Prompt Mestre</button>
+        </div>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.modal-tab-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const modalId = button.dataset.modal;
-                    const tabId = button.dataset.tab;
-                    const parentModal = button.closest('.request-modal');
-                    parentModal.querySelectorAll('.modal-tab-btn').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    parentModal.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
-                    parentModal.querySelector(`#modal${modalId}-tab-${tabId}`).classList.add('active');
-                });
-            });
-
             document.querySelectorAll('.copy-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const target = document.getElementById(button.dataset.target);
                     if (!target) return;
 
-                    const textToCopy = target.tagName.toLowerCase() === 'pre' ? target.innerText : target.value;
+                    const textToCopy = target.tagName.toLowerCase() === 'pre' || target.classList.contains('prompt-text') ? target.innerText : target.value;
                     
                     const textArea = document.createElement('textarea');
                     textArea.value = textToCopy;
@@ -486,11 +370,11 @@
                     try {
                         const successful = document.execCommand('copy');
                         if(successful){
-                            const originalIcon = button.innerHTML;
-                            button.innerHTML = '✔';
+                            const originalText = button.innerText;
+                            button.innerText = '✓ Copiado!';
                             button.classList.add('copied');
                             setTimeout(() => {
-                                button.innerHTML = originalIcon;
+                                button.innerText = originalText;
                                 button.classList.remove('copied');
                             }, 2000);
                         }
